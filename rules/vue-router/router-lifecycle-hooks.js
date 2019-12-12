@@ -25,6 +25,11 @@ module.exports = {
   warning: function (match, hook) {
     const replacementHook = hookReplacements[hook] + ''
     const info = extraInfo[hook]
+
+
+    const oldSyntax = chalk.red(hook);
+    const newSyntax = replacementHook;
+
     return {
       reason: 'The ' + hook + ' router lifecycle hook has been removed',
       fix: (
@@ -35,7 +40,12 @@ module.exports = {
         (info || '')
       ),
       docsHash: hook + '',
-      type: 'js'
+      type: 'js',
+      suggest: {
+        replace: true,
+        oldSyntax: oldSyntax,
+        newSyntax: newSyntax
+      }
     }
   }
 }

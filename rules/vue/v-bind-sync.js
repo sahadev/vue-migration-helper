@@ -5,6 +5,8 @@ var chalk = require('chalk')
 module.exports = {
   pattern: /((?:v-bind)?:)([\w-]+)\.(sync)=(["][^"]+["]|['][^']+[']|\w+)/,
   warning: function (match, vBindPrefix, boundProp, modifier, value) {
+    const oldSyntax = chalk.red(match);
+    const newSyntax = chalk.green(vBindPrefix + boundProp + '=' + value)
     return {
       reason: 'v-bind.sync and v-bind.once have removed to enforce one-way down props, leaving side effects to more explicit component events',
       fix: (
@@ -13,7 +15,12 @@ module.exports = {
         ', then $emit an event from the child component to trigger an update to ' + value.replace(/['"]/g, '') + ' in the parent'
       ),
       docsHash: 'v-bind-with-once-and-sync-Modifiers',
-      type: 'template'
+      type: 'template',
+      suggest: {
+        replace: true,
+        oldSyntax: oldSyntax,
+        newSyntax: newSyntax
+      }
     }
   }
 }

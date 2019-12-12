@@ -35,20 +35,36 @@ require('./helpers/check-if-outdated')(function () {
     var fileChecks = files.map(function (file) {
       return new Promise(function (resolve, reject) {
         var lineNum = 0
+
+        const writeFS = fs.createWriteStream(file + '.bak').on('ready', function (args) {
+          debugger
+        });
+
+        let fileContent = '';
         fs.createReadStream(file)
           .pipe(split())
           .on('data', function (line) {
-            lineNum++
+            lineNum++;
+            fileContent += line + '\n';
             var lineHasDeprecation = checkForDeprecations({
               line: line,
               lineNum: lineNum,
               file: file
+            }, function(args){
+              fileContent = fileContent.replace(args.suggest.oldSyntax, args.suggest.newSyntax);
             })
             if (lineHasDeprecation) {
               deprecationsFound = true
             }
           })
-          .on('end', resolve)
+          .on('end', function () {
+            //去除末尾的空格
+            writeFS.end(fileContent.substr(0, fileContent.length - 1));
+            fs.rename(file + '.bak', file, function (err) {
+              if (err) throw err;
+            })
+            resolve()
+          })
       })
     })
     Promise.all(fileChecks)

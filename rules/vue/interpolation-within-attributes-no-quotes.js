@@ -5,18 +5,22 @@ var chalk = require('chalk')
 module.exports = {
   pattern: /\b([\w-:@\.]+)=\{\{(.+?)\}\}/,
   warning: function (match, attribute, value) {
+
+    const oldSyntax = chalk.red(match);
+    const newSyntax = 'v-bind:' + attribute + '="' + value.trim() + '"'
+
     return {
       reason: 'Interpolation within attributes has been removed',
       fix: (
-        'Update ' + chalk.red(match) + ' to ' +
-        chalk.green(
-          'v-bind:' + attribute + '="' +
-          value.trim() +
-          '"'
-        )
+        'Update ' + oldSyntax + ' to ' + chalk.green(newSyntax)
       ),
       docsHash: 'Interpolation-within-Attributes',
-      type: 'template'
+      type: 'template',
+      suggest: {
+        replace: true,
+        oldSyntax: oldSyntax,
+        newSyntax: newSyntax
+      }
     }
   }
 }

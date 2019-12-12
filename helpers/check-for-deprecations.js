@@ -29,11 +29,11 @@ var ignorableExtensions = {
   style: ['js']
 }
 
-function fileHasExtension (file, extension) {
+function fileHasExtension(file, extension) {
   return path.extname(file).slice(1) === extension
 }
 
-function shouldIgnoreWarning (file, warning) {
+function shouldIgnoreWarning(file, warning) {
   if (warning.type === 'package.json') {
     return path.basename(file) !== warning.type
   } else {
@@ -43,11 +43,20 @@ function shouldIgnoreWarning (file, warning) {
   }
 }
 
-module.exports = function (fileData) {
+module.exports = function (fileData, dealFunc) {
   return rules.some(function (rule) {
     var warning = assertRule(fileData, rule)
     if (warning && !shouldIgnoreWarning(fileData.file, warning)) {
       reportWarning(fileData, warning, rule)
+      // 在此获取替换规则
+      if (warning.suggest && dealFunc) {
+        dealFunc({
+          suggest: warning.suggest,
+          result: true
+        })
+      }
+
+      // 最后返回一个处理结果对象
       return true
     }
     return false

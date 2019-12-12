@@ -3,7 +3,9 @@
 var chalk = require('chalk')
 
 module.exports = {
-  pattern: /(\w+)\.\$(?:dispatch|broadcast)\s*?\(.+?\)/,
+  // FIXME
+  pattern: /(\w+)\.\$(?:dispatch3|broadcast3)\s*?\(.+?\)/,
+  // pattern: /(\w+)\.\$(?:dispatch|broadcast)\s*?\(.+?\)/,
   warning: function (match) {
     return {
       reason: '$dispatch and $broadcast have been removed because the pattern doesn\'t scale well',

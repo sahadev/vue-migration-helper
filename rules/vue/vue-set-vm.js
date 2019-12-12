@@ -6,6 +6,12 @@ module.exports = {
   pattern: /(Vue\.set|(?:this|vm|self)\.\$set)\(\s*?(this|vm|self)\s*?,([^,]+?),([^,]+?)\)/,
   warning: function (match, command, vm, property, value) {
     const formattedProperty = property.replace(/['"]/g, '').trim()
+
+    const oldSyntax = chalk.red(match);
+    const newSyntax = chalk.green(
+      vm + '.' + formattedProperty + ' = ' + value.trim()
+    );
+
     return {
       reason: 'Vue.set and Vue.delete no longer work on Vue instances - it is now mandatory to properly declare all top-level reactive properties in the data option',
       fix: (
@@ -16,7 +22,12 @@ module.exports = {
         ' and declare ' + formattedProperty + ' in the data option with an initial value'
       ),
       docsHash: 'Vue-set-and-Vue-delete-on-Vue-instances',
-      type: 'js'
+      type: 'js'      ,
+      suggest: {
+        replace: true,
+        oldSyntax: oldSyntax,
+        newSyntax: newSyntax
+      }
     }
   }
 }

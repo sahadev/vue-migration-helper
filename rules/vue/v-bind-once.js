@@ -5,6 +5,8 @@ var chalk = require('chalk')
 module.exports = {
   pattern: /((?:v-bind)?:)([\w-]+)\.(once)=(["][^"]+["]|['][^']+[']|\w+)/,
   warning: function (match, vBindPrefix, boundProp, modifier, value) {
+    const oldSyntax = chalk.red(match);
+    const newSyntax = chalk.green('ref="' + camelCase(name) + '"')
     return {
       reason: 'v-bind.sync and v-bind.once have removed to enforce one-way down props, leaving side effects to more explicit component events',
       fix: (
